@@ -55,7 +55,7 @@ SMA Sunny Tripower Test
 
 Device unit ID  : 3
 Device class    : Hybrid-Wechselrichter
-Serial Number   : 3017462771
+Serial Number   : xxxxxxxx
 Software Packet : 50665988
 Device Type     : SUNNY TRIPOWER 6.0 SE (STP6.0-3SE-40)
 

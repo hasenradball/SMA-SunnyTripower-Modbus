@@ -76,7 +76,7 @@ class MariaDBMysql:
             cursor.close()
             return True
 
-    def insert_by_sql_insert_stmt(self, table, columns, values) -> bool:
+    def insert_by_sql_insert_stmt(self, table, columns, *values) -> bool:
         """Insert data into mariaDB by insert statement
         -----
 
@@ -88,10 +88,11 @@ class MariaDBMysql:
         Returns:
             True when successful or False when failed
         """
+        values_str = ', '.join(str(v) for v in values)
         try:
             cursor = self.connector.cursor()
             # INSERT INTO `waermepumpe`.`energie` (E_import_tot, E_export_tot) VALUES(20.9, 31.4)
-            query_str = f"INSERT INTO `{self._config['database']}`.`{table}` ({columns}) VALUES({str(values)})"
+            query_str = f"INSERT INTO `{self._config['database']}`.`{table}` ({columns}) VALUES({values_str})"
             #print(query_str)
             cursor.execute(query_str)
             self.connector.commit()

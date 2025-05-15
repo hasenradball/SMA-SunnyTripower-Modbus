@@ -2,8 +2,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from pymodbus.constants import Endian
-from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.client import ModbusTcpClient as ModBusClient
 from pymodbus import (FramerType, ExceptionResponse, ModbusException)
 from .modbus_constants import ModbusConstants as CONSTS
@@ -118,33 +116,18 @@ class SmaModbus:
         
         --
         """
-        #decoder = BinaryPayloadDecoder.fromRegisters(readings.registers, \
-        #        byteorder=Endian.BIG, wordorder=Endian.BIG)
-        #print(f'decoder : {decoder}')
         data = []
-        if datatype == 'U8':
-            #data = [decoder.decode_8bit_uint() for i in range(count)]
-            data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.UINT8)
-        elif datatype == 'U16':
-            #data = [decoder.decode_16bit_uint() for i in range(count)]
+        if datatype == 'U16':
             data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.UINT16)
         elif datatype == 'U32':
-            #data = [decoder.decode_32bit_uint() for i in range(count)]
             data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.UINT32)
         elif datatype == 'U64':
-            #data = [decoder.decode_64bit_uint() for i in range(count)]
             data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.UINT64)
-        elif datatype == 'S8':
-            #data = [decoder.decode_16bit_int() for i in range(count)]
-            data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.INT8)
         elif datatype == 'S16':
-            #data = [decoder.decode_8bit_int() for i in range(count)]
             data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.INT16)
         elif datatype == 'S32':
-            #data = [decoder.decode_32bit_int() for i in range(count)]
             data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.INT32)
         elif datatype == 'S64':
-            #data = [decoder.decode_64bit_int() for i in range(count)]
             data = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.INT64)
         return data
 
@@ -157,7 +140,7 @@ class SunnyTripower(SmaModbus):
     Check Register description --> see specific documentation of manufacturer 
     """
 
-    def get_device_class(self):
+    def get_device_class(self) -> str:
         """Read the device class
         
         -----
@@ -173,7 +156,7 @@ class SunnyTripower(SmaModbus):
         #print(class_of_device)
         return class_of_device
 
-    def get_device_type(self):
+    def get_device_type(self) -> str:
         """Read the device type
         
         -----
@@ -191,7 +174,7 @@ class SunnyTripower(SmaModbus):
         #print("Device Type: ", Device_Type)
         return device
 
-    def get_serial_number(self):
+    def get_serial_number(self) -> int :
         """Read the serial number
         
         -----
@@ -207,7 +190,7 @@ class SunnyTripower(SmaModbus):
         #print("Serial#: ", data)
         return data
 
-    def get_software_packet(self):
+    def get_software_packet(self) -> int :
         """Read the software packet information
         
         -----
@@ -221,7 +204,7 @@ class SunnyTripower(SmaModbus):
         data = self.read_holding_register(30059, 'U32')
         return data
 
-    def get_status_of_device(self):
+    def get_status_of_device(self) -> str:
         """Read the device status
         
         -----
@@ -237,7 +220,7 @@ class SunnyTripower(SmaModbus):
         #print('Status: ', Status)
         return status
 
-    def get_grid_relay_status(self):
+    def get_grid_relay_status(self) -> str:
         """Read the status of the grid relay/contact
         
         Register: 30217; U32
@@ -253,7 +236,7 @@ class SunnyTripower(SmaModbus):
         #print(data)
         return CONSTS.RELAY_STATE[data]
 
-    def get_total_yield_Wh(self):
+    def get_total_yield_Wh(self) -> int:
         """Read the total yield
         
         get the total yield in Wh
@@ -269,7 +252,7 @@ class SunnyTripower(SmaModbus):
         #print(data)
         return data
 
-    def get_total_yield_kWh(self):
+    def get_total_yield_kWh(self) ->int :
         """Read the total yield
         
         get the total yield in kWh
@@ -285,7 +268,7 @@ class SunnyTripower(SmaModbus):
         #print(data)
         return data
 
-    def get_total_yield_MWh(self):
+    def get_total_yield_MWh(self) -> int:
         """Read the total yield
         
         get the total yield in MWh
@@ -301,7 +284,7 @@ class SunnyTripower(SmaModbus):
         #print(data)
         return data
 
-    def get_daily_yield(self):
+    def get_daily_yield(self) -> int:
         """Read the daily yield
         
         get daily yield in Wh
@@ -317,7 +300,7 @@ class SunnyTripower(SmaModbus):
         #print(data)
         return data
 
-    def get_operating_mode(self):
+    def get_operating_mode(self) -> str:
         """Read the operating mode
         
         get the operating mode
@@ -333,7 +316,7 @@ class SunnyTripower(SmaModbus):
         #print(mode)
         return CONSTS.OPERATIMG_MODE[mode]
 
-    def get_locking_state(self):
+    def get_locking_state(self) -> str:
         """Read the locking state of device
         
         get the locking state
@@ -349,7 +332,7 @@ class SunnyTripower(SmaModbus):
         #print(code)
         return CONSTS.LOCKING_STATE[code]
 
-    def get_dc_current_in(self):
+    def get_dc_current_in(self) -> tuple:
         """Read the incomming dc current
         
         get DC current incomming
@@ -372,7 +355,7 @@ class SunnyTripower(SmaModbus):
         #print(dc_current)
         return dc_current
 
-    def get_dc_voltage_in(self):
+    def get_dc_voltage_in(self) -> tuple:
         """Read the incommng dc voltages
         
         get DC voltage incomming
@@ -391,7 +374,7 @@ class SunnyTripower(SmaModbus):
         #print(dc_voltage)
         return dc_voltage
 
-    def get_dc_power_in(self):
+    def get_dc_power_in(self) -> tuple:
         """Read the incomming dc power
             
         get the DC power incomming
@@ -410,7 +393,7 @@ class SunnyTripower(SmaModbus):
         #print(dc_power)
         return dc_power
 
-    def get_active_power(self):
+    def get_active_power(self) -> tuple:
         """Read the active power of phases L1, L2, L3
 
         Active Power of all phases
@@ -447,7 +430,7 @@ class SunnyTripower(SmaModbus):
         #print('Aktive Wirkleistung L3:\t\t', p3, " kW")
         return (p_sum, p1, p2, p3)
 
-    def get_ac_current(self):
+    def get_ac_current(self) -> tuple:
         """Read the actual current of phases i1, i2, i3
         
         AC Current of L1

@@ -1,4 +1,6 @@
 # SMA-Sunny-Tripower-SE-Modbus
+[![Spell Check](https://github.com/hasenradball/SMA-SunnyTripower-Modbus/actions/workflows/spell_checker.yml/badge.svg)](https://github.com/hasenradball/SMA-SunnyTripower-Modbus/actions/workflows/spell_checker.yml)
+
 Python solution connecting the SMA SunnyTripower SE inverters.
 
 ![SMA-SunnyBoy](./docs/SMA/SMA-Sunny_Tripower_SE.jpg)

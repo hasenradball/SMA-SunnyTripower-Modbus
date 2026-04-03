@@ -459,22 +459,6 @@ class SunnyTripower(SmaModbus):
       #print('AC Strom  L2:\t\t{0:.3f} A'.format(i_ac_L2))
       #print('AC Strom  L3:\t\t{0:.3f} A'.format(i_ac_L3))
       return (i1_ac, i2_ac, i3_ac)
-
-   def get_actual_power_of_load(self) -> float:
-      """Read actual power of load
-
-      Active Power of load
-      Register: 30861; S32
-      ----
-      Unit: kW
-      """
-      p_load = self.read_holding_register(30861, 'S32', 1)
-      #print(type(result.registers), ": ", result.registers)
-      p_load = round(p_load / 1000, 3)
-      if p_load < 0:
-         p_load = 0.0
-      #print('Akuelle Leistung Verbaucher: ', p_load, " kW")
-      return p_load
    
    def get_actual_power_of_grid_import(self) -> float:
       """Read actual power of grid import
@@ -508,34 +492,3 @@ class SunnyTripower(SmaModbus):
       #print('Akuelle Leistung Verbaucher: ', p_grid_out, " kW")
       return p_grid_out
 
-   def get_actual_power_of_pv_production(self) -> float:
-      """Read actual power of pv production
-
-      Active Power of PV production
-      Register: 30869; S32
-      ----
-      Unit: kW
-      """
-      p_pv_production = self.read_holding_register(30869, 'S32', 1)
-      #print(type(result.registers), ": ", result.registers)
-      p_pv_production = round(p_pv_production / 1000, 3)
-      if p_pv_production < 0:
-         p_pv_production = 0.0
-      #print('Akuelle Leistung Verbaucher: ', p_pv_production, " kW")
-      return p_pv_production
-
-   def get_actual_power_of_internal_consumtion(self) -> float:
-      """Read actual power of internal consumtion
-
-      Active Power of own consumption
-      Register: 30871; U32
-      ----
-      Unit: kW
-      """
-      p_own_consumption = self.read_holding_register(30871, 'U32', 1)
-      #print(type(result.registers), ": ", result.registers)
-      p_own_consumption = round(p_own_consumption / 1000, 3)
-      if p_own_consumption < 0:
-         p_own_consumption = 0.0
-      #print('Akuelle Leistung Verbaucher: ', p_own_consumption, " kW")
-      return p_own_consumption

@@ -33,16 +33,12 @@ if __name__ == "__main__":
    print(f'Active Power     : {sunny_obj.get_active_power()} kW')
    print(f'AC Current       : {sunny_obj.get_ac_current()} A')
    print ("\n")
-   # Leistung Verbraucher
-   print(f'Load Power       : {sunny_obj.get_actual_power_of_load()} kW')
+  
    # Leistung Netzbezug
    print(f'Grid IN Power    : {sunny_obj.get_actual_power_of_grid_import()} kW')
    # Leistung Netzeinspeisung
    print(f'Grid OUT Power   : {sunny_obj.get_actual_power_of_grid_export()} kW')
-   # Leistung PV Erzeugung
-   print(f'PV Power         : {sunny_obj.get_actual_power_of_pv_production()} kW')
-   # Leistung Eigenverbrauch
-   print(f'Power Own Usage  : {sunny_obj.get_actual_power_of_internal_consumtion()} kW')
+   
    sunny_obj.close()
    toc = time.perf_counter()
    print(f'\nINFO: test finished in {toc-tic:.3f} s')

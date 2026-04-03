@@ -44,7 +44,7 @@ class SmaModbus:
       ---
       Register: 42109; U32, U16, U16
       """
-      readings = self._client.read_holding_registers(42109, count=4, slave=1)
+      readings = self._client.read_input_registers(42109, count=4, slave=1)
       unit_id = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.UINT16)[3]
       #print(f'UnitID       : {unit_id}')
       return unit_id
@@ -71,8 +71,9 @@ class SmaModbus:
          #print("INFO: Connection closed!")
       return None
 
-   def read_holding_register(self, register_address, datatype, count = 1):
-      """Read the holding register from SMA device
+   def read_input_register(self, register_address, datatype, count = 1):
+      """Read the input register from SMA device
+         Register address: 30001...39999
 
       Keyword arguments:
 
@@ -83,20 +84,20 @@ class SmaModbus:
       count -- number of datatypes to read (default 1)
 
       --
-      Function code : 0x03
+      Function code : 0x04
       """
       length = CONSTS.TYPE_TO_LENGTH[datatype] * count
       #print(f'length : {length}')
       try:
-         result = self._client.read_holding_registers(register_address, \
+         result = self._client.read_input_registers(register_address, \
             count=length, slave=self._device_unit_id)
          #print(result, type(result))
       except ModbusException as exc:
-         print(f">>> read_holding_register: Received ModbusException({exc}) from library")
+         print(f">>> read_input_register: Received ModbusException({exc}) from library")
       if result.isError():
-         print(f">>> read_holding_register: Received Modbus library error({result})")
+         print(f">>> read_input_register: Received Modbus library error({result})")
       if isinstance(result, ExceptionResponse):
-         print(f">>> read_holding_register: Received Modbus library exception ({result})")
+         print(f">>> read_input_register: Received Modbus library exception ({result})")
          # THIS IS NOT A PYTHON EXCEPTION, but a valid modbus message
          return False
       #print(type(result.registers), ": ", result.registers)
@@ -151,9 +152,9 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: -
       """
-      data = self.read_holding_register(30051, 'U32')
+      data = self.read_input_register(30051, 'U32')
       class_of_device = CONSTS.DEVICE_CLASS[data]
-      #print(class_of_device)
+      #print(f'Class of device : {class_of_device}')
       return class_of_device
 
    def get_device_type(self) -> str:
@@ -169,10 +170,10 @@ class SunnyTripower(SmaModbus):
       """
 
       # read device type of default unit id = 3
-      data = self.read_holding_register(30053, 'U32')
-      device = CONSTS.DEVICE_TYPE[data]
-      #print("Device Type: ", Device_Type)
-      return device
+      data = self.read_input_register(30053, 'U32')
+      device_type = CONSTS.DEVICE_TYPE[data]
+      #print(f'Device Type : {device_type}')
+      return device_type
 
    def get_serial_number(self) -> int :
       """Read the serial number
@@ -186,8 +187,8 @@ class SunnyTripower(SmaModbus):
       Unit: -
       """
       # read serial number of deafult unit id = 3
-      data = self.read_holding_register(30057, 'U32')
-      #print("Serial#: ", data)
+      data = self.read_input_register(30057, 'U32')
+      #print(f'Serial# : {data}')
       return data
 
    def get_software_packet(self) -> int :
@@ -201,7 +202,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: -
       """
-      data = self.read_holding_register(30059, 'U32')
+      data = self.read_input_register(30059, 'U32')
+      #print(f'sofware packet : {data}')
       return data
 
    def get_status_of_device(self) -> str:
@@ -215,9 +217,9 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: -
       """
-      data = self.read_holding_register(30201, 'U32')
+      data = self.read_input_register(30201, 'U32')
       status = CONSTS.DEVICE_STATUS[data]
-      #print('Status: ', Status)
+      #print(f'Status : {status}')
       return status
 
    def get_grid_relay_status(self) -> str:
@@ -232,8 +234,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: -
       """
-      data = self.read_holding_register(30217, 'U32')
-      #print(data)
+      data = self.read_input_register(30217, 'U32')
+      #print(f'Relais Status : {CONSTS.RELAY_STATE[data]}')
       return CONSTS.RELAY_STATE[data]
 
    def get_total_yield_Wh(self) -> int:
@@ -248,8 +250,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: Wh
       """
-      data = self.read_holding_register(30513, 'U64')
-      #print(data)
+      data = self.read_input_register(30513, 'U64')
+      #print(f'Total yield : {data} Wh')
       return data
 
    def get_total_yield_kWh(self) ->int :
@@ -264,8 +266,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: kWh
       """
-      data = self.read_holding_register(30531, 'U32')
-      #print(data)
+      data = self.read_input_register(30531, 'U32')
+      #print(f'Total yield : {data} kWh')
       return data
 
    def get_total_yield_MWh(self) -> int:
@@ -280,8 +282,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: MWh
       """
-      data = self.read_holding_register(30533, 'U32')
-      #print(data)
+      data = self.read_input_register(30533, 'U32')
+      #print(f'Total yield : {data} MWh')
       return data
 
    def get_daily_yield(self) -> int:
@@ -296,8 +298,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: Wh
       """
-      data = self.read_holding_register(30517, 'U64')
-      #print(data)
+      data = self.read_input_register(30517, 'U64')
+      #print(f'Daily yield : {data} Wh')
       return data
 
    def get_operating_mode(self) -> str:
@@ -312,8 +314,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: s
       """
-      mode = self.read_holding_register(33003, 'U32')
-      #print(mode)
+      mode = self.read_input_register(33003, 'U32')
+      #print(f'Operating mode : {CONSTS.OPERATIMG_MODE[mode]}')
       return CONSTS.OPERATIMG_MODE[mode]
 
    def get_locking_state(self) -> str:
@@ -328,8 +330,8 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: s
       """
-      code = self.read_holding_register(30251, 'U32')
-      #print(code)
+      code = self.read_input_register(30251, 'U32')
+      #print(f'Locking state : {CONSTS.LOCKING_STATE[code]}')
       return CONSTS.LOCKING_STATE[code]
 
    def get_dc_current_in(self) -> tuple:
@@ -347,12 +349,12 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: A
       """
-      dc_current1 = self.read_holding_register(30769, 'S32')/1000
-      dc_current2 = self.read_holding_register(30957, 'S32')/1000
-      dc_current3 = self.read_holding_register(31793, 'S32')/1000
-      dc_current4 = self.read_holding_register(31795, 'S32')/1000
+      dc_current1 = self.read_input_register(30769, 'S32')/1000
+      dc_current2 = self.read_input_register(30957, 'S32')/1000
+      dc_current3 = self.read_input_register(31793, 'S32')/1000
+      dc_current4 = self.read_input_register(31795, 'S32')/1000
       dc_current = (dc_current1, dc_current2, dc_current3, dc_current4)
-      #print(dc_current)
+      #print(f'DC Current : {dc_current} A')
       return dc_current
 
    def get_dc_voltage_in(self) -> tuple:
@@ -368,10 +370,10 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: V
       """
-      dc_voltage1 = self.read_holding_register(30771, 'S32')/100
-      dc_voltage2 = self.read_holding_register(30959, 'S32')/100
+      dc_voltage1 = self.read_input_register(30771, 'S32')/100
+      dc_voltage2 = self.read_input_register(30959, 'S32')/100
       dc_voltage = (dc_voltage1, dc_voltage2)
-      #print(dc_voltage)
+      #print(f'DC Voltage : {dc_voltage} V')
       return dc_voltage
 
    def get_dc_power_in(self) -> tuple:
@@ -387,10 +389,10 @@ class SunnyTripower(SmaModbus):
       Function-Code: 0x04
       Unit: W
       """
-      dc_power1 = self.read_holding_register(30773, 'S32')
-      dc_power2 = self.read_holding_register(30961, 'S32')
+      dc_power1 = self.read_input_register(30773, 'S32')
+      dc_power2 = self.read_input_register(30961, 'S32')
       dc_power = (dc_power1, dc_power2)
-      #print(dc_power)
+      #print(f'DC Power : {dc_power} V')
       return dc_power
 
    def get_active_power(self) -> tuple:
@@ -410,7 +412,7 @@ class SunnyTripower(SmaModbus):
       ----
       Unit: kW
       """
-      data = self.read_holding_register(30775, 'S32', 4)
+      data = self.read_input_register(30775, 'S32', 4)
       #print(type(result.registers), ": ", result.registers)
       p_sum = round(data[0] / 1000, 3)
       if p_sum < 0:
@@ -424,10 +426,10 @@ class SunnyTripower(SmaModbus):
       p3 = round(data[3]  / 1000, 3)
       if p3 < 0:
          p3 = 0
-      #print('Aktive Wirkleistung Summe: ', p_sum, " kW")
-      #print('Aktive Wirkleistung L1:\t\t', p1, " kW")
-      #print('Aktive Wirkleistung L2:\t\t', p2, " kW")
-      #print('Aktive Wirkleistung L3:\t\t', p3, " kW")
+      #print(f'Aktive Wirkleistung Summe : {p_sum} kW')
+      #print(f'Aktive Wirkleistung L1 : {p1} kW')
+      #print(f'Aktive Wirkleistung L2 : {p2} kW')
+      #print(f'Aktive Wirkleistung L3 : {p3} kW')
       return (p_sum, p1, p2, p3)
 
    def get_ac_current(self) -> tuple:
@@ -444,8 +446,8 @@ class SunnyTripower(SmaModbus):
       ----
       Unit: A
       """
-      # read_holding_registers(Startwert, Anzahl Register, slave=self._device_unit_id)
-      data = self.read_holding_register(30977, 'S32', 3)
+      # read_input_registers(Startwert, Anzahl Register, slave=self._device_unit_id)
+      data = self.read_input_register(30977, 'S32', 3)
       i1_ac = round(data[0] / 1000, 3)
       if i1_ac < 0:
          i1_ac = 0
@@ -455,9 +457,9 @@ class SunnyTripower(SmaModbus):
       i3_ac = round(data[2] / 1000, 3)
       if i3_ac < 0:
          i3_ac = 0
-      #print('AC Strom  L1:\t\t{0:.3f} A'.format(i_ac_L1))
-      #print('AC Strom  L2:\t\t{0:.3f} A'.format(i_ac_L2))
-      #print('AC Strom  L3:\t\t{0:.3f} A'.format(i_ac_L3))
+      #print(f'AC Strom L1 :\t\t{i1_ac:.3f} A')
+      #print(f'AC Strom L2 :\t\t{i2_ac:.3f} A')
+      #print(f'AC Strom L3 :\t\t{i3_ac:.3f} A')
       return (i1_ac, i2_ac, i3_ac)
    
    def get_actual_power_of_grid_import(self) -> float:
@@ -468,12 +470,12 @@ class SunnyTripower(SmaModbus):
       ----
       Unit: kW
       """
-      p_grid_in = self.read_holding_register(30865, 'S32', 1)
+      p_grid_in = self.read_input_register(30865, 'S32', 1)
       #print(type(result.registers), ": ", result.registers)
       p_grid_in = round(p_grid_in / 1000, 3)
       if p_grid_in < 0:
          p_grid_in = 0.0
-      #print('Akuelle Leistung Verbaucher: ', p_grid_in, " kW")
+      #print(f'Power grid import : {p_grid_in} kW')
       return p_grid_in
 
    def get_actual_power_of_grid_export(self) -> float:
@@ -484,11 +486,11 @@ class SunnyTripower(SmaModbus):
       ----
       Unit: kW
       """
-      p_grid_out = self.read_holding_register(30867, 'S32', 1)
+      p_grid_out = self.read_input_register(30867, 'S32', 1)
       #print(type(result.registers), ": ", result.registers)
       p_grid_out = round(p_grid_out / 1000, 3)
       if p_grid_out < 0:
          p_grid_out = 0.0
-      #print('Akuelle Leistung Verbaucher: ', p_grid_out, " kW")
+      #print(f'Power grid export : {p_grid_out} kW')
       return p_grid_out
 

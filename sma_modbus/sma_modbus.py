@@ -44,7 +44,7 @@ class SmaModbus:
       ---
       Register: 42109; U32, U16, U16
       """
-      readings = self._client.read_input_registers(42109, count=4, slave=1)
+      readings = self._client.read_input_registers(42109, count=4, device_id=1)
       unit_id = self._client.convert_from_registers(readings.registers, data_type=self._client.DATATYPE.UINT16)[3]
       #print(f'UnitID       : {unit_id}')
       return unit_id
@@ -90,7 +90,7 @@ class SmaModbus:
       #print(f'length : {length}')
       try:
          result = self._client.read_input_registers(register_address, \
-            count=length, slave=self._device_unit_id)
+            count=length, device_id=self._device_unit_id)
          #print(result, type(result))
       except ModbusException as exc:
          print(f">>> read_input_register: Received ModbusException({exc}) from library")
@@ -446,7 +446,6 @@ class SunnyTripower(SmaModbus):
       ----
       Unit: A
       """
-      # read_input_registers(Startwert, Anzahl Register, slave=self._device_unit_id)
       data = self.read_input_register(30977, 'S32', 3)
       i1_ac = round(data[0] / 1000, 3)
       if i1_ac < 0:
